@@ -10,19 +10,15 @@ const IMAGESROLL = [
 ];
 
 const IMAGES = [
-  // Row 1
   "/images/HD/1657195887500.jpg",
   "/images/HD/1657195887529.jpg",
   "/images/HD/1657195887555.jpg",
-  // Row 2
   "/images/HD/1657195887579.jpg",
   "/images/HD/1657195887600.jpg",
   "/images/HD/1657195887626.jpg",
-  // Row 3
   "/images/HD/1657195887647.jpg",
   "/images/HD/1657195887669.jpg",
   "/images/HD/1657195887695.jpg",
-  // Row 4
   "/images/HD/1657195887729.jpg",
   "/images/HD/1657195887780.jpg",
   "/images/HD/1657195887810.jpg",
@@ -35,24 +31,33 @@ const Gallery = () => {
   useEffect(() => {
     const slideInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % IMAGESROLL.length);
-    }, 4000); // Change slide every 4 seconds
+    }, 4000);
 
     return () => clearInterval(slideInterval);
   }, []);
 
-  // Scroll reveal
+  // Scroll reveal - FIXED
   useEffect(() => {
     const reveals = document.querySelectorAll(".reveal");
+    
     const onScroll = () => {
       reveals.forEach((el) => {
-        if (el.getBoundingClientRect().top < window.innerHeight - 100) {
+        const windowHeight = window.innerHeight;
+        const elementTop = el.getBoundingClientRect().top;
+        const elementVisible = 100;
+        
+        if (elementTop < windowHeight - elementVisible) {
           el.classList.add("active");
         }
       });
     };
+    
+    // Trigger on mount
     onScroll();
-    window.addEventListener("scroll", onScroll);
-
+    
+    // Add scroll listener with passive flag
+    window.addEventListener("scroll", onScroll, { passive: true });
+    
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -60,10 +65,12 @@ const Gallery = () => {
   useEffect(() => {
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
+    const closeBtn = document.querySelector(".close");
 
     const clickHandlers = [];
     document.querySelectorAll(".gallery-card img").forEach((img) => {
-      const handler = () => {
+      const handler = (e) => {
+        e.stopPropagation();
         if (lightbox && lightboxImg) {
           lightbox.style.display = "flex";
           lightboxImg.src = img.src;
@@ -76,23 +83,27 @@ const Gallery = () => {
     const closeHandler = () => {
       if (lightbox) lightbox.style.display = "none";
     };
+
     if (lightbox) lightbox.addEventListener("click", closeHandler);
+    if (closeBtn) closeBtn.addEventListener("click", closeHandler);
 
     return () => {
       clickHandlers.forEach(({ img, handler }) =>
         img.removeEventListener("click", handler)
       );
       if (lightbox) lightbox.removeEventListener("click", closeHandler);
+      if (closeBtn) closeBtn.removeEventListener("click", closeHandler);
     };
   }, []);
 
-  // Manual slide navigation
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % IMAGESROLL.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + IMAGESROLL.length) % IMAGESROLL.length);
+    setCurrentSlide((prev) =>
+      prev - 1 < 0 ? IMAGESROLL.length - 1 : prev - 1
+    );
   };
 
   const goToSlide = (index) => {
@@ -114,27 +125,25 @@ const Gallery = () => {
           ))}
         </div>
 
-        {/* Carousel Controls */}
-        <button className="carousel-btn prev" onClick={prevSlide}>
-          ❮
+        <button className="carousel-btn prev" onClick={prevSlide} aria-label="Previous">
+          
         </button>
-        <button className="carousel-btn next" onClick={nextSlide}>
-          ❯
+        <button className="carousel-btn next" onClick={nextSlide} aria-label="Next">
+          
         </button>
 
-        {/* Carousel Indicators */}
         <div className="carousel-indicators">
           {IMAGESROLL.map((_, idx) => (
             <button
               key={idx}
               className={`indicator ${idx === currentSlide ? "active" : ""}`}
               onClick={() => goToSlide(idx)}
+              aria-label={`Slide ${idx + 1}`}
             />
           ))}
         </div>
 
-        {/* Hero Content Overlay */}
-        <div className="hero-content">
+        <div className="hero-content-gallary">
           <h1>Step Into Luxury Living</h1>
           <p>
             Experience refined elegance through curated decor, from serene
