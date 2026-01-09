@@ -1,4 +1,11 @@
 /* ===== GLOBAL ===== */
+:root {
+  --grey-premium: #545863;     /* Dark, refined grey for headers/nav [web:7][web:8] */
+  --leaf-green-premium: #71AA34; /* Vibrant leaf accent for buttons/hovers [web:11][web:17] */
+  --plaster-premium: #E6E2D8;  /* Warm neutral bg for sections/cards [web:12][web:18] */
+  --plaster-light: #F0EFEA;    /* Softer variant for body bg */
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -670,3 +677,43 @@ nav a:hover::after {
     display: none;
   }
 }
+/* Add to top after body {} */
+body {
+  background: var(--plaster-light);
+}
+
+/* Navbar */
+header {
+  background: var(--grey-premium);
+}
+
+/* Hero gradient overlay keeps dark, but text/buttons update */
+.hero-left .discover-btn {
+  background: var(--leaf-green-premium);
+  color: var(--grey-premium);
+}
+.hero-left .discover-btn:hover {
+  box-shadow: 0 18px 35px rgba(113, 170, 52, 0.6); /* Leaf green tint */
+}
+
+/* Category/search buttons */
+.category-bar button, .arrow-btn {
+  background: var(--grey-premium);
+}
+.category-bar button:hover {
+  background: var(--leaf-green-premium);
+}
+
+/* Cards & sections */
+.product-card h3, .category-section h2 {
+  color: var(--grey-premium);
+}
+.products-grid {
+  /* Add subtle bg if needed */
+}
+
+/* Footer */
+.decor-footer {
+  background: linear-gradient(135deg, var(--grey-premium), #020c1b);
+}
+
